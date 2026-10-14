@@ -8,7 +8,7 @@ import (
 )
 
 func returnNum(w http.ResponseWriter, r *http.Request) {
-	resp := rand.IntN(7)
+	resp := rand.IntN(6) + 1
 	w.Write([]byte(strconv.Itoa(resp)))
 }
 func main() {
