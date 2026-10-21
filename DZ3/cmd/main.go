@@ -18,6 +18,7 @@ func main() {
 		Handler: router,
 	}
 	router.HandleFunc("POST /send", h.SendHandler)
+	router.HandleFunc("GET /verify/{hash}", h.VerifyHandler)
 	server.ListenAndServe()
 
 }
