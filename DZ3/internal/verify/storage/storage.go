@@ -72,5 +72,8 @@ func CheckToken(token string) bool {
 		return false
 	}
 	err = os.WriteFile(storageFile, updateBytes, 0644)
+	if err != nil {
+		return false
+	}
 	return true
 }
