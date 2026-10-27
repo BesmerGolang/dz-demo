@@ -20,5 +20,8 @@ func main() {
 		log.Println("Failed to open database")
 		panic(err)
 	}
-	db.AutoMigrate(models.Product{})
+	err = db.AutoMigrate(models.Product{})
+	if err != nil {
+		panic(err)
+	}
 }
