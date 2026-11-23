@@ -1,7 +1,7 @@
 package main
 
 import (
-	"dz4/internal/auth/models"
+	"dz4/internal/product"
 	"log"
 	"os"
 
@@ -20,7 +20,7 @@ func main() {
 		log.Println("Failed to open database")
 		panic(err)
 	}
-	err = db.AutoMigrate(models.Product{})
+	err = db.AutoMigrate(product.Product{})
 	if err != nil {
 		panic(err)
 	}
