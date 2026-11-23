@@ -20,11 +20,30 @@ func NewProdHandler(router *http.ServeMux, deps ProductHandlerDeps) {
 	handler := &ProductHandler{
 		ProdRepo: deps.ProdRepo,
 	}
-	router.HandleFunc("POST /createProd", handler.Create())
-	router.HandleFunc("PATCH /updProd{id}", handler.Update())
-	router.HandleFunc("DELETE /deleteProd{id}", handler.Delete())
+	router.HandleFunc("POST /product", handler.Create())
+	router.HandleFunc("PATCH /product/{id}", handler.Update())
+	router.HandleFunc("DELETE /product/{id}", handler.Delete())
+	router.HandleFunc("GET /product/{id}", handler.GetById())
 }
-
+func (handler *ProductHandler) GetById() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idString := r.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		existedProduct, err := handler.ProdRepo.GetById(uint(id))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if existedProduct == nil {
+			res.Json(w, nil, 404)
+		}
+		res.Json(w, existedProduct, 200)
+	}
+}
 func (handler *ProductHandler) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := req.HandleBody[req.ProductReq](w, r)
@@ -62,6 +81,10 @@ func (handler *ProductHandler) Update() http.HandlerFunc {
 			Description: body.Description,
 			Images:      body.Images,
 		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
 		res.Json(w, product, 201)
 	}
 }
